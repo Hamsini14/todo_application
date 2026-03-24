@@ -4,9 +4,18 @@ from flask import Flask, render_template, request, redirect, url_for
 from datetime import datetime
 
 app = Flask(__name__)
+
+# Requirements: File-based storage using tasks.json
 TASKS_FILE = 'tasks.json'
 
+def init_db():
+    """Ensure tasks.json exists on startup."""
+    if not os.path.exists(TASKS_FILE):
+        with open(TASKS_FILE, 'w') as f:
+            json.dump([], f)
+
 def load_tasks():
+    """Load tasks from tasks.json if it exists."""
     if not os.path.exists(TASKS_FILE):
         return []
     with open(TASKS_FILE, 'r') as f:
@@ -16,6 +25,7 @@ def load_tasks():
             return []
 
 def save_tasks(tasks):
+    """Update the tasks.json file whenever a task is modified."""
     with open(TASKS_FILE, 'w') as f:
         json.dump(tasks, f, indent=4)
 
@@ -94,4 +104,5 @@ def delete_task(task_id):
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
+    init_db()  # Create tasks.json automatically if it doesn't exist
     app.run(host='0.0.0.0', port=5000, debug=True)
