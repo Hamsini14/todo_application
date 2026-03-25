@@ -8,6 +8,11 @@ app = Flask(__name__)
 # Requirements: File-based storage using tasks.json
 TASKS_FILE = 'tasks.json'
 
+# Create file if not exists
+if not os.path.exists(TASKS_FILE):
+    with open(TASKS_FILE, 'w') as f:
+        json.dump([], f)
+
 def init_db():
     """Ensure tasks.json exists on startup."""
     if not os.path.exists(TASKS_FILE):
