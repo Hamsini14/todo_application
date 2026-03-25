@@ -184,6 +184,11 @@
         <button class="tab-btn" onclick="showTab('add')">Add Task</button>
         <button class="tab-btn" onclick="showTab('delete')">Delete Tasks</button>
         <button class="tab-btn" id="edit-nav-btn" onclick="showTab('edit')" style="display:none;">Edit Task</button>
+        <div style="margin-top: auto;">
+            <a href="/logout" class="tab-btn" style="text-decoration: none; color: #ef4444;">
+                <span>Logout</span>
+            </a>
+        </div>
     </div>
 
     <div class="main-content">
@@ -200,11 +205,16 @@
                 {% if tasks %}
                     {% for task in tasks %}
                         <div class="task-card">
-                            <div class="task-info-main">
-                                <span class="task-title">{{ task.content }}</span>
-                                <div class="task-date-info">
-                                    <span>{{ task.date }}</span>
-                                    <span class="task-day-tag">{{ task.day }}</span>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <form action="/complete/{{ task.id }}" method="POST" style="margin: 0;">
+                                    <input type="checkbox" onchange="this.form.submit()" style="width: 20px; height: 20px; cursor: pointer;">
+                                </form>
+                                <div class="task-info-main">
+                                    <span class="task-title">{{ task.content }}</span>
+                                    <div class="task-date-info">
+                                        <span>{{ task.date }}</span>
+                                        <span class="task-day-tag">{{ task.day }}</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="actions">

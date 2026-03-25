@@ -1,23 +1,47 @@
 import json
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from datetime import datetime
+from functools import wraps
 
 app = Flask(__name__)
+app.secret_key = 'super-secret-key-change-this-in-production'
 
-# Requirements: File-based storage using tasks.json
+# Requirements: File-based storage using tasks.json and users.json
 TASKS_FILE = 'tasks.json'
+USERS_FILE = 'users.json'
 
-# Create file if not exists
-if not os.path.exists(TASKS_FILE):
-    with open(TASKS_FILE, 'w') as f:
-        json.dump([], f)
-
+# Create files if not exist
 def init_db():
-    """Ensure tasks.json exists on startup."""
+    """Ensure tasks.json and users.json exist on startup."""
     if not os.path.exists(TASKS_FILE):
         with open(TASKS_FILE, 'w') as f:
             json.dump([], f)
+    if not os.path.exists(USERS_FILE):
+        with open(USERS_FILE, 'w') as f:
+            json.dump([], f)
+
+def load_users():
+    if not os.path.exists(USERS_FILE):
+        return []
+    with open(USERS_FILE, 'r') as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            return []
+
+def save_users(users):
+    with open(USERS_FILE, 'w') as f:
+        json.dump(users, f, indent=4)
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 def load_tasks():
     """Load tasks from tasks.json if it exists."""
@@ -34,12 +58,54 @@ def save_tasks(tasks):
     with open(TASKS_FILE, 'w') as f:
         json.dump(tasks, f, indent=4)
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        users = load_users()
+        if any(user['username'] == username for user in users):
+            flash("User already exists!")
+            return render_template('signup.html')
+        
+        users.append({'username': username, 'password': password})
+        save_users(users)
+        flash("Signup successful! Please login.")
+        return redirect(url_for('login'))
+    return render_template('signup.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        users = load_users()
+        user = next((u for u in users if u['username'] == username and u['password'] == password), None)
+        
+        if user:
+            session['username'] = username
+            return redirect(url_for('index'))
+        else:
+            flash("Invalid credentials!")
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
+
 @app.route('/')
+@login_required
 def index():
     tasks = load_tasks()
+    # Only show incomplete tasks in the main view
+    tasks = [t for t in tasks if not t.get('completed', False)]
     return render_template('index.html', tasks=tasks)
 
 @app.route('/add', methods=['POST'])
+@login_required
 def add_task():
     task_content = request.form.get('task')
     task_date = request.form.get('date')
@@ -70,13 +136,15 @@ def add_task():
             'id': len(tasks) + 1 if not tasks else max(t['id'] for t in tasks) + 1,
             'content': task_content,
             'date': task_date,
-            'day': day_name
+            'day': day_name,
+            'completed': False
         }
         tasks.append(new_task)
         save_tasks(tasks)
     return redirect(url_for('index'))
 
 @app.route('/edit/<int:task_id>', methods=['POST'])
+@login_required
 def edit_task(task_id):
     task_content = request.form.get('task')
     task_date = request.form.get('date')
@@ -102,9 +170,21 @@ def edit_task(task_id):
     return redirect(url_for('index'))
 
 @app.route('/delete/<int:task_id>', methods=['POST'])
+@login_required
 def delete_task(task_id):
     tasks = load_tasks()
     tasks = [task for task in tasks if task['id'] != task_id]
+    save_tasks(tasks)
+    return redirect(url_for('index'))
+
+@app.route('/complete/<int:task_id>', methods=['POST'])
+@login_required
+def complete_task(task_id):
+    tasks = load_tasks()
+    for task in tasks:
+        if task['id'] == task_id:
+            task['completed'] = True
+            break
     save_tasks(tasks)
     return redirect(url_for('index'))
 

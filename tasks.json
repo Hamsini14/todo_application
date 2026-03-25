@@ -1,8 +1,9 @@
 [
     {
-        "id": 2,
-        "content": "Advanced AI assignment?",
-        "date": "2026-03-30",
-        "day": "Monday"
+        "id": 1,
+        "content": "DevOps project",
+        "date": "2026-12-05",
+        "day": "Saturday",
+        "completed": true
     }
 ]
