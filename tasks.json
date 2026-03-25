@@ -5,5 +5,20 @@
         "date": "2026-12-05",
         "day": "Saturday",
         "completed": true
+    },
+    {
+        "id": 2,
+        "content": "sscd",
+        "date": "2026-04-20",
+        "day": "Monday",
+        "completed": false
+    },
+    {
+        "id": 3,
+        "user": "Deekshith",
+        "content": "sscd",
+        "date": "2026-04-20",
+        "day": "Monday",
+        "completed": true
     }
 ]
