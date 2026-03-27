@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        SMTP_EMAIL = credentials('smtp-email')
+        SMTP_PASSWORD = credentials('smtp-password')
+    }
+
     stages {
         stage('Setup') {
             steps {
@@ -11,7 +16,8 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                bat 'pytest test_app.py'
+                // The tests will now have access to SMTP_EMAIL and SMTP_PASSWORD
+                bat 'pytest test_auth.py'
             }
         }
         stage('Run') {

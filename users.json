@@ -1,6 +1,22 @@
 [
     {
         "username": "Hamsini",
-        "password": "1234"
+        "password": "1234",
+        "email": "hamsinibhatv@gmail.com"
+    },
+    {
+        "username": "Hamsini Bhat V",
+        "password": "2005",
+        "email": "hamsinibhatv2005@gmail.com"
+    },
+    {
+        "username": "Hamsini bhat",
+        "password": "1234567891234567",
+        "email": "hamsinibhatv2005@gmail.com"
+    },
+    {
+        "username": "Deekshith M V",
+        "password": "12345678",
+        "email": "deekshithmv06@gmail.com"
     }
 ]

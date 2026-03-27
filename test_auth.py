@@ -1,6 +1,7 @@
 import pytest
 import os
 import json
+from datetime import datetime
 from app import app, init_db, USERS_FILE, TASKS_FILE
 
 @pytest.fixture
@@ -21,14 +22,14 @@ def client():
         os.remove(TASKS_FILE)
 
 def test_signup(client):
-    response = client.post('/signup', data={'username': 'testuser', 'password': 'testpassword'}, follow_redirects=True)
+    response = client.post('/signup', data={'username': 'testuser', 'email': 'test@example.com', 'password': 'testpassword'}, follow_redirects=True)
     assert b"Signup successful" in response.data
     with open(USERS_FILE, 'r') as f:
         users = json.load(f)
-        assert any(u['username'] == 'testuser' for u in users)
+        assert any(u['username'] == 'testuser' and u['email'] == 'test@example.com' for u in users)
 
 def test_login_success(client):
-    client.post('/signup', data={'username': 'testuser', 'password': 'testpassword'})
+    client.post('/signup', data={'username': 'testuser', 'email': 'test@example.com', 'password': 'testpassword'})
     response = client.post('/login', data={'username': 'testuser', 'password': 'testpassword'}, follow_redirects=True)
     assert b"Your Schedule" in response.data
 
@@ -42,7 +43,7 @@ def test_protected_route(client):
 
 def test_task_completion(client):
     # Signup and Login
-    client.post('/signup', data={'username': 'testuser', 'password': 'testpassword'})
+    client.post('/signup', data={'username': 'testuser', 'email': 'test@example.com', 'password': 'testpassword'})
     client.post('/login', data={'username': 'testuser', 'password': 'testpassword'})
     
     # Add a task
@@ -67,3 +68,17 @@ def test_task_completion(client):
     with open(TASKS_FILE, 'r') as f:
         tasks = json.load(f)
         assert tasks[0]['completed'] == True
+
+def test_notifications_page(client):
+    # Signup and Login
+    client.post('/signup', data={'username': 'testuser', 'email': 'test@example.com', 'password': 'testpassword'})
+    client.post('/login', data={'username': 'testuser', 'password': 'testpassword'})
+    
+    # Add a task with immediate deadline (today)
+    today_str = datetime.now().strftime('%Y-%m-%d')
+    client.post('/add', data={'task': 'Urgent Task', 'date': today_str})
+    
+    # Check notifications page
+    response = client.get('/notifications')
+    assert b"Urgent Task" in response.data
+    assert b"Today" in response.data

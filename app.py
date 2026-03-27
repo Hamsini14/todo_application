@@ -1,14 +1,32 @@
 import json
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from datetime import datetime
+from datetime import datetime, timedelta
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from functools import wraps
+
+# ---------------- ENV LOADING ----------------
+def load_env():
+    found = os.path.exists('.env')
+    if found:
+        with open('.env') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ[key.strip()] = value.strip().strip("'").strip('"')
+    return found
+
+ENV_FOUND = load_env()
 
 app = Flask(__name__)
 app.secret_key = 'super-secret-key-change-this-in-production'
 
 TASKS_FILE = 'tasks.json'
 USERS_FILE = 'users.json'
+LOG_FILE = 'email_errors.log'
 
 # ---------------- INIT ----------------
 def init_db():
@@ -69,7 +87,8 @@ def signup():
             flash("User already exists!")
             return render_template('signup.html')
 
-        users.append({'username': username, 'password': password})
+        email = request.form.get('email')
+        users.append({'username': username, 'password': password, 'email': email})
         save_users(users)
 
         flash("Signup successful! Please login.")
@@ -89,6 +108,7 @@ def login():
 
         if user:
             session['username'] = username
+            session['email'] = user.get('email')
             return redirect(url_for('index'))
         else:
             flash("Invalid credentials!")
@@ -99,7 +119,44 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
+    session.pop('email', None)
     return redirect(url_for('login'))
+
+
+# ---------------- EMAIL UTILITY ----------------
+def send_deadline_email(receiver_email, task_content, deadline):
+    # SMTP Configuration (Using placeholders - User should set these)
+    sender_email = os.environ.get('SMTP_EMAIL', 'your-gmail@gmail.com')
+    sender_password = os.environ.get('SMTP_PASSWORD', 'your-app-password')
+
+    # Debug Log: Track sending attempts
+    debug_msg = f"[{datetime.now()}] Info: Attempting email to {receiver_email} from {sender_email}\n"
+    with open(LOG_FILE, 'a') as f:
+        f.write(debug_msg)
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    message["Subject"] = f"Deadline Alert: {task_content}"
+
+    body = f"Hello,\n\nThis is a reminder that your task '{task_content}' is due on {deadline}.\n\nPlease complete it soon!\n\nBest,\nTaskNest Team"
+    message.attach(MIMEText(body, "plain"))
+
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, receiver_email, message.as_string())
+        server.quit()
+        return True
+    except Exception as e:
+        error_msg = f"[{datetime.now()}] Error sending to {receiver_email}: {str(e)}\n"
+        with open(LOG_FILE, 'a') as f:
+            f.write(error_msg)
+        print(error_msg)
+        return False
 
 # ---------------- MAIN ----------------
 @app.route('/')
@@ -107,14 +164,15 @@ def logout():
 def index():
     tasks = load_tasks()
     today = datetime.now().date()
+    updated = False
 
-    # 🔥 FILTER USER TASKS
+    # 🔥 FILTER USER TASKS & CHECK NOTIFICATIONS
     user_tasks = []
     for t in tasks:
         if t.get('user') == session['username'] and not t.get('completed', False):
-            # Safe priority handling
-            if 'priority' not in t:
-                t['priority'] = 'Medium'
+            # Safe priority & notified handling
+            if 'priority' not in t: t['priority'] = 'Medium'
+            if 'notified' not in t: t['notified'] = False
             
             # Deadline Warning Logic
             t['warning'] = None
@@ -123,16 +181,58 @@ def index():
                 try:
                     task_date = datetime.strptime(task_date_str, '%Y-%m-%d').date()
                     diff = (task_date - today).days
+                    
                     if diff == 0:
                         t['warning'] = "⚠️ Due Today"
                     elif diff == 1:
-                        t['warning'] = "⏳ Due Soon"
-                except:
-                    pass
+                        t['warning'] = "⏳ Tomorrow"
+                    elif diff == 2:
+                        t['warning'] = "📅 Due Soon"
+
+                    # Email logic: within 2 days and not notified
+                    if 0 <= diff <= 2 and not t.get('notified'):
+                        if session.get('email'):
+                            if send_deadline_email(session['email'], t['content'], t['date']):
+                                t['notified'] = True
+                                updated = True
+                                flash(f"Notification email sent to {session['email']} for '{t['content']}'", "success")
+                            else:
+                                flash(f"Failed to send email for '{t['content']}'. Check email_errors.log", "danger")
+                except Exception as e:
+                    print(f"Error in deadline logic: {e}")
             
             user_tasks.append(t)
 
+    if updated:
+        save_tasks(tasks)
+
     return render_template('index.html', tasks=user_tasks)
+
+
+@app.route('/notifications')
+@login_required
+def notifications():
+    tasks = load_tasks()
+    today = datetime.now().date()
+    upcoming_tasks = []
+
+    for t in tasks:
+        if t.get('user') == session['username'] and not t.get('completed', False):
+            task_date_str = t.get('date')
+            if task_date_str:
+                try:
+                    task_date = datetime.strptime(task_date_str, '%Y-%m-%d').date()
+                    diff = (task_date - today).days
+                    if 0 <= diff <= 2:
+                        # Add warning label for template
+                        if diff == 0: t['warning'] = "Today"
+                        elif diff == 1: t['warning'] = "Tomorrow"
+                        else: t['warning'] = "Due Soon"
+                        upcoming_tasks.append(t)
+                except:
+                    pass
+
+    return render_template('notifications.html', tasks=upcoming_tasks)
 
 # ---------------- ADD ----------------
 @app.route('/add', methods=['POST'])
@@ -169,7 +269,8 @@ def add_task():
             'date': task_date,
             'day': day_name,
             'priority': task_priority,
-            'completed': False
+            'completed': False,
+            'notified': False  # 🔥 NEW
         }
 
         tasks.append(new_task)

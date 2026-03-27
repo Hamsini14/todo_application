@@ -1,47 +1,45 @@
 [
     {
-        "id": 2,
+        "id": 1,
         "user": "Hamsini",
-        "content": "Advanced AI assignment?",
+        "content": "DevOps project",
         "date": "2026-03-27",
         "day": "Friday",
         "priority": "High",
-        "completed": true
+        "completed": false,
+        "notified": true,
+        "warning": "\u26a0\ufe0f Due Today"
+    },
+    {
+        "id": 2,
+        "user": "Hamsini Bhat V",
+        "content": "DevOps project",
+        "date": "2026-03-27",
+        "day": "Friday",
+        "priority": "High",
+        "completed": false,
+        "notified": false
+    },
+    {
+        "id": 3,
+        "user": "Deekshith M V",
+        "content": "DevOps project",
+        "date": "2026-03-27",
+        "day": "Friday",
+        "priority": "High",
+        "completed": true,
+        "notified": true,
+        "warning": "\u26a0\ufe0f Due Today"
     },
     {
         "id": 4,
         "user": "Hamsini",
         "content": "data science report",
-        "date": "2026-04-08",
-        "day": "Wednesday",
-        "priority": "Medium",
-        "completed": false
-    },
-    {
-        "id": 5,
-        "user": "Hamsini",
-        "content": "cypto record",
-        "date": "2026-04-09",
-        "day": "Thursday",
-        "priority": "Low",
-        "completed": false
-    },
-    {
-        "id": 6,
-        "user": "Hamsini",
-        "content": "devops presentation",
-        "date": "2026-03-27",
-        "day": "Friday",
-        "priority": "High",
-        "completed": true
-    },
-    {
-        "id": 7,
-        "user": "Hamsini",
-        "content": "DevOps project",
-        "date": "2026-06-27",
+        "date": "2026-03-28",
         "day": "Saturday",
         "priority": "Medium",
-        "completed": false
+        "completed": false,
+        "notified": true,
+        "warning": "\u23f3 Tomorrow"
     }
 ]

@@ -287,6 +287,7 @@
         <button class="tab-btn active" onclick="showTab('view')">View Tasks</button>
         <button class="tab-btn" onclick="showTab('add')">Add Task</button>
         <button class="tab-btn" onclick="showTab('delete')">Delete Tasks</button>
+        <a href="/notifications" class="tab-btn" style="text-decoration: none;">Notifications</a>
         <button class="tab-btn" id="edit-nav-btn" onclick="showTab('edit')" style="display:none;">Edit Task</button>
         <div style="margin-top: auto;">
             <a href="/logout" class="tab-btn" style="text-decoration: none; color: #ef4444;">
@@ -296,9 +297,21 @@
     </div>
 
     <div class="main-content">
-        <div class="alert">
+        <div id="flash-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}" style="display: block; background: {% if category == 'success' %}#dcfce7{% else %}#fef2f2{% endif %}; color: {% if category == 'success' %}#15803d{% else %}#b91c1c{% endif %}; border: 1px solid {% if category == 'success' %}#86efac{% else %}#fecaca{% endif %};">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            
             {% if request.args.get('error') == 'past_date' %}
-            Error: You cannot pick a date in the past!
+            <div class="alert alert-danger" style="display: block;">
+                Error: You cannot pick a date in the past!
+            </div>
             {% endif %}
         </div>
 

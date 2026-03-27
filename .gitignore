@@ -1,0 +1,19 @@
+# Environment variables (Secrets)
+.env
+
+# Database/Storage (Local data)
+users.json
+tasks.json
+email_errors.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+env/
+venv/
+bin/
+lib/
+include/
