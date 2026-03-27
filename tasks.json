@@ -1,11 +1,47 @@
 [
     {
-        "id": 1,
+        "id": 2,
         "user": "Hamsini",
-        "content": "DevOps project",
+        "content": "Advanced AI assignment?",
         "date": "2026-03-27",
         "day": "Friday",
         "priority": "High",
+        "completed": true
+    },
+    {
+        "id": 4,
+        "user": "Hamsini",
+        "content": "data science report",
+        "date": "2026-04-08",
+        "day": "Wednesday",
+        "priority": "Medium",
+        "completed": false
+    },
+    {
+        "id": 5,
+        "user": "Hamsini",
+        "content": "cypto record",
+        "date": "2026-04-09",
+        "day": "Thursday",
+        "priority": "Low",
+        "completed": false
+    },
+    {
+        "id": 6,
+        "user": "Hamsini",
+        "content": "devops presentation",
+        "date": "2026-03-27",
+        "day": "Friday",
+        "priority": "High",
+        "completed": true
+    },
+    {
+        "id": 7,
+        "user": "Hamsini",
+        "content": "DevOps project",
+        "date": "2026-06-27",
+        "day": "Saturday",
+        "priority": "Medium",
         "completed": false
     }
 ]

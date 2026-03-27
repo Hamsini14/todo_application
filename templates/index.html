@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,14 +16,16 @@
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --danger: #ef4444;
-            --success: #22c55e;
+            --success: #22c530;
             --warning: #f59e0b;
             --border: #e2e8f0;
             --radius: 12px;
             --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Outfit', sans-serif;
@@ -68,7 +71,7 @@
         }
 
         .tab-btn:hover {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             color: white;
         }
 
@@ -90,14 +93,28 @@
             margin: 0 auto;
         }
 
-        .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
         }
 
-        h2 { margin-top: 0; font-weight: 600; font-size: 2rem; }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            margin-top: 0;
+            font-weight: 600;
+            font-size: 2rem;
+        }
 
         /* Card styles */
         .card {
@@ -109,9 +126,19 @@
         }
 
         /* Form styles */
-        .form-group { margin-bottom: 1.5rem; }
-        label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.875rem; }
-        input[type="text"], input[type="date"] {
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        input[type="text"],
+        input[type="date"] {
             width: 100%;
             padding: 0.875rem;
             border: 1px solid var(--border);
@@ -132,10 +159,16 @@
             transition: background 0.3s;
         }
 
-        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
 
         /* Task List styles */
-        .task-grid { display: grid; gap: 1rem; }
+        .task-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
         .task-card {
             background: white;
             padding: 1.25rem;
@@ -146,14 +179,38 @@
             align-items: center;
             transition: transform 0.2s;
         }
-        .task-card:hover { transform: scale(1.01); }
 
-        .task-info-main { display: flex; flex-direction: column; }
-        .task-title { font-weight: 600; font-size: 1.1rem; }
-        .task-date-info { font-size: 0.85rem; color: var(--text-muted); display: flex; gap: 0.5rem; }
-        .task-day-tag { color: var(--primary); font-weight: 600; }
+        .task-card:hover {
+            transform: scale(1.01);
+        }
 
-        .actions { display: flex; gap: 0.5rem; }
+        .task-info-main {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .task-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .task-date-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .task-day-tag {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
         .action-btn {
             border: none;
             padding: 0.5rem 0.75rem;
@@ -164,8 +221,15 @@
             transition: opacity 0.2s;
         }
 
-        .btn-delete { background: #fee2e2; color: var(--danger); }
-        .btn-edit { background: #e0e7ff; color: var(--primary); }
+        .btn-delete {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .btn-edit {
+            background: #e0e7ff;
+            color: var(--primary);
+        }
 
         /* Alert */
         .alert {
@@ -174,6 +238,7 @@
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 1.5rem;
+
             display: {% if request.args.get('error') %}block{% else %}none{% endif %};
         }
 
@@ -185,9 +250,24 @@
             font-weight: 700;
             text-transform: uppercase;
         }
-        .priority-High { background: #fee2e2; color: var(--danger); border: 1px solid #fca5a5; }
-        .priority-Medium { background: #fef9c3; color: #a16207; border: 1px solid #fde047; }
-        .priority-Low { background: #dcfce7; color: var(--success); border: 1px solid #86efac; }
+
+        .priority-High {
+            background: #fee2e2;
+            color: var(--danger);
+            border: 1px solid #fca5a5;
+        }
+
+        .priority-Medium {
+            background: #fef9c3;
+            color: #a16207;
+            border: 1px solid #fde047;
+        }
+
+        .priority-Low {
+            background: #dcfce7;
+            color: var(--success);
+            border: 1px solid #86efac;
+        }
 
         .deadline-warning {
             font-size: 0.85rem;
@@ -200,6 +280,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="sidebar">
         <div class="sidebar-header">TaskNest</div>
@@ -217,7 +298,7 @@
     <div class="main-content">
         <div class="alert">
             {% if request.args.get('error') == 'past_date' %}
-                Error: You cannot pick a date in the past!
+            Error: You cannot pick a date in the past!
             {% endif %}
         </div>
 
@@ -226,33 +307,35 @@
             <h2>Your Schedule</h2>
             <div class="task-grid">
                 {% if tasks %}
-                    {% for task in tasks %}
-                        <div class="task-card">
-                            <div style="display: flex; align-items: center; gap: 1rem;">
-                                <form action="/complete/{{ task.id }}" method="POST" style="margin: 0;">
-                                    <input type="checkbox" onchange="this.form.submit()" style="width: 20px; height: 20px; cursor: pointer;">
-                                </form>
-                                <div class="task-info-main">
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <span class="task-title">{{ task.content }}</span>
-                                        <span class="priority-tag priority-{{ task.priority }}">{{ task.priority }}</span>
-                                    </div>
-                                    <div class="task-date-info">
-                                        <span>{{ task.date }}</span>
-                                        <span class="task-day-tag">{{ task.day }}</span>
-                                        {% if task.warning %}
-                                            <span class="deadline-warning">{{ task.warning }}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                {% for task in tasks %}
+                <div class="task-card">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <form action="/complete/{{ task.id }}" method="POST" style="margin: 0;">
+                            <input type="checkbox" onchange="this.form.submit()"
+                                style="width: 20px; height: 20px; cursor: pointer;">
+                        </form>
+                        <div class="task-info-main">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="task-title">{{ task.content }}</span>
+                                <span class="priority-tag priority-{{ task.priority }}">{{ task.priority }}</span>
                             </div>
-                            <div class="actions">
-                                <button class="action-btn btn-edit" onclick="triggerEdit('{{ task.id }}', '{{ task.content }}', '{{ task.date }}', '{{ task.priority }}')">Edit</button>
+                            <div class="task-date-info">
+                                <span>{{ task.date }}</span>
+                                <span class="task-day-tag">{{ task.day }}</span>
+                                {% if task.warning %}
+                                <span class="deadline-warning">{{ task.warning }}</span>
+                                {% endif %}
                             </div>
                         </div>
-                    {% endfor %}
+                    </div>
+                    <div class="actions">
+                        <button class="action-btn btn-edit"
+                            onclick="triggerEdit('{{ task.id }}', '{{ task.content }}', '{{ task.date }}', '{{ task.priority }}')">Edit</button>
+                    </div>
+                </div>
+                {% endfor %}
                 {% else %}
-                    <p class="text-muted">No tasks found. Start by adding one!</p>
+                <p class="text-muted">No tasks found. Start by adding one!</p>
                 {% endif %}
             </div>
         </div>
@@ -272,7 +355,8 @@
                     </div>
                     <div class="form-group">
                         <label>Priority</label>
-                        <select name="priority" class="btn-primary" style="background: white; color: var(--text-dark); border: 1px solid var(--border); text-align: left; font-weight: 400;">
+                        <select name="priority" class="btn-primary"
+                            style="background: white; color: var(--text-dark); border: 1px solid var(--border); text-align: left; font-weight: 400;">
                             <option value="High">🔴 High</option>
                             <option value="Medium" selected>🟡 Medium</option>
                             <option value="Low">🟢 Low</option>
@@ -288,22 +372,23 @@
             <h2>Remove Tasks</h2>
             <div class="task-grid">
                 {% if tasks %}
-                    {% for task in tasks %}
-                        <div class="task-card" style="border-color: #fee2e2;">
-                            <div class="task-info-main">
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <span class="task-title">{{ task.content }}</span>
-                                    <span class="priority-tag priority-{{ task.priority }}" style="font-size: 0.65rem;">{{ task.priority }}</span>
-                                </div>
-                                <span class="task-date-info">{{ task.date }}</span>
-                            </div>
-                            <form action="/delete/{{ task.id }}" method="POST">
-                                <button type="submit" class="action-btn btn-delete">Delete Forever</button>
-                            </form>
+                {% for task in tasks %}
+                <div class="task-card" style="border-color: #fee2e2;">
+                    <div class="task-info-main">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span class="task-title">{{ task.content }}</span>
+                            <span class="priority-tag priority-{{ task.priority }}" style="font-size: 0.65rem;">{{
+                                task.priority }}</span>
                         </div>
-                    {% endfor %}
+                        <span class="task-date-info">{{ task.date }}</span>
+                    </div>
+                    <form action="/delete/{{ task.id }}" method="POST">
+                        <button type="submit" class="action-btn btn-delete">Delete Forever</button>
+                    </form>
+                </div>
+                {% endfor %}
                 {% else %}
-                    <p class="text-muted">Nothing to delete.</p>
+                <p class="text-muted">Nothing to delete.</p>
                 {% endif %}
             </div>
         </div>
@@ -323,7 +408,8 @@
                     </div>
                     <div class="form-group">
                         <label>Priority</label>
-                        <select name="priority" id="edit-priority" class="btn-primary" style="background: white; color: var(--text-dark); border: 1px solid var(--border); text-align: left; font-weight: 400;">
+                        <select name="priority" id="edit-priority" class="btn-primary"
+                            style="background: white; color: var(--text-dark); border: 1px solid var(--border); text-align: left; font-weight: 400;">
                             <option value="High">🔴 High</option>
                             <option value="Medium">🟡 Medium</option>
                             <option value="Low">🟢 Low</option>
@@ -343,7 +429,7 @@
 
             // Show target
             document.getElementById(tabId).classList.add('active');
-            
+
             // Find right button
             const btn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.innerText.toLowerCase().includes(tabId));
             if (btn) btn.classList.add('active');
@@ -354,7 +440,7 @@
             }
         }
 
-        function triggerEdit(id, content, date) {
+        function triggerEdit(id, content, date, priority) {
             // Populate form
             document.getElementById('edit-form').action = '/edit/' + id;
             document.getElementById('edit-content').value = content;
@@ -363,7 +449,7 @@
 
             // Show nav button
             document.getElementById('edit-nav-btn').style.display = 'flex';
-            
+
             // Switch tab
             showTab('edit');
         }
@@ -374,4 +460,5 @@
         document.getElementById('edit-date').min = today;
     </script>
 </body>
+
 </html>
