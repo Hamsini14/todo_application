@@ -106,12 +106,31 @@ def logout():
 @login_required
 def index():
     tasks = load_tasks()
+    today = datetime.now().date()
 
     # 🔥 FILTER USER TASKS
-    user_tasks = [
-        t for t in tasks
-        if t.get('user') == session['username'] and not t.get('completed', False)
-    ]
+    user_tasks = []
+    for t in tasks:
+        if t.get('user') == session['username'] and not t.get('completed', False):
+            # Safe priority handling
+            if 'priority' not in t:
+                t['priority'] = 'Medium'
+            
+            # Deadline Warning Logic
+            t['warning'] = None
+            task_date_str = t.get('date')
+            if task_date_str:
+                try:
+                    task_date = datetime.strptime(task_date_str, '%Y-%m-%d').date()
+                    diff = (task_date - today).days
+                    if diff == 0:
+                        t['warning'] = "⚠️ Due Today"
+                    elif diff == 1:
+                        t['warning'] = "⏳ Due Soon"
+                except:
+                    pass
+            
+            user_tasks.append(t)
 
     return render_template('index.html', tasks=user_tasks)
 
@@ -121,6 +140,7 @@ def index():
 def add_task():
     task_content = request.form.get('task')
     task_date = request.form.get('date')
+    task_priority = request.form.get('priority', 'Medium')
 
     if task_content:
         # Prevent past date
@@ -148,6 +168,7 @@ def add_task():
             'content': task_content,
             'date': task_date,
             'day': day_name,
+            'priority': task_priority,
             'completed': False
         }
 
@@ -162,6 +183,7 @@ def add_task():
 def edit_task(task_id):
     task_content = request.form.get('task')
     task_date = request.form.get('date')
+    task_priority = request.form.get('priority')
 
     tasks = load_tasks()
 
@@ -169,6 +191,9 @@ def edit_task(task_id):
         if task['id'] == task_id and task.get('user') == session['username']:
             if task_content:
                 task['content'] = task_content
+
+            if task_priority:
+                task['priority'] = task_priority
 
             if task_date:
                 try:
