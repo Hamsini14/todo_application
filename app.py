@@ -17,6 +17,11 @@ def load_env():
                 if line and not line.startswith('#') and '=' in line:
                     key, value = line.split('=', 1)
                     os.environ[key.strip()] = value.strip().strip("'").strip('"')
+    
+    # Render/Production Log: Check if variables exist in environment
+    print(f"[{datetime.now()}] Environment Check: SMTP_EMAIL set? {'Yes' if 'SMTP_EMAIL' in os.environ else 'No'}")
+    print(f"[{datetime.now()}] Environment Check: SMTP_PASSWORD set? {'Yes' if 'SMTP_PASSWORD' in os.environ else 'No'}")
+    
     return found
 
 ENV_FOUND = load_env()
@@ -133,6 +138,8 @@ def send_deadline_email(receiver_email, task_content, deadline):
     debug_msg = f"[{datetime.now()}] Info: Attempting email to {receiver_email} from {sender_email}\n"
     with open(LOG_FILE, 'a') as f:
         f.write(debug_msg)
+    print(debug_msg.strip()) # Visible in Render Dashboard
+    
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
 
