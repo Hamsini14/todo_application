@@ -135,7 +135,9 @@ def send_deadline_email(receiver_email, task_content, deadline):
     sender_password = os.environ.get('SMTP_PASSWORD', 'your-app-password')
 
     # Debug Log: Track sending attempts
-    debug_msg = f"[{datetime.now()}] Info: Attempting email to {receiver_email} from {sender_email}\n"
+    p_len = len(sender_password)
+    p_star = f"{sender_password[0]}***{sender_password[-1]}" if p_len > 2 else "***"
+    debug_msg = f"[{datetime.now()}] Debug: Sending to {receiver_email} from {sender_email} | Pass Len: {p_len} | Pass: {p_star}\n"
     with open(LOG_FILE, 'a') as f:
         f.write(debug_msg)
     print(debug_msg.strip()) # Visible in Render Dashboard
